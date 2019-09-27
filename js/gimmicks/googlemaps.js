@@ -10,6 +10,30 @@ function googlemapsReady() {
     //'use strict';
     var scripturl = 'http://maps.google.com/maps/api/js?sensor=false&callback=googlemapsReady';
 
+    function set_map(opt, div_id) {
+
+        // google uses rather complicated mapnames, we transform our simple ones
+        var mt = opt.maptype.toUpperCase ();
+        opt.mapTypeId = google.maps.MapTypeId[mt];
+        var geocoder = new google.maps.Geocoder ();
+
+        // geocode performs address to coordinate transformation
+        geocoder.geocode ({ address: opt.address }, function (result, status) {
+            if (status !== 'OK') {
+                return;
+            }
+
+            // add the retrieved coords to the options object
+            var coords = result[0].geometry.location;
+
+            var options = $.extend({}, opt, { center: coords  });
+            var gmap = new google.maps.Map(document.getElementById(div_id), options);
+            if (options.marker === true) {
+                var marker = new google.maps.Marker ({ position: coords, map : gmap});
+            }
+        });
+    }
+
     function googlemaps($links, opt, text) {
         var $maps_links = $links;
         var counter = (new Date()).getTime ();
@@ -42,29 +66,6 @@ function googlemapsReady() {
             // the div is already put into the site and will be formated,
             // we can now run async
             set_map (options, div_id);
-        });
-    }
-    function set_map(opt, div_id) {
-
-        // google uses rather complicated mapnames, we transform our simple ones
-        var mt = opt.maptype.toUpperCase ();
-        opt.mapTypeId = google.maps.MapTypeId[mt];
-        var geocoder = new google.maps.Geocoder ();
-
-        // geocode performs address to coordinate transformation
-        geocoder.geocode ({ address: opt.address }, function (result, status) {
-            if (status !== 'OK') {
-                return;
-            }
-
-            // add the retrieved coords to the options object
-            var coords = result[0].geometry.location;
-
-            var options = $.extend({}, opt, { center: coords  });
-            var gmap = new google.maps.Map(document.getElementById(div_id), options);
-            if (options.marker === true) {
-                var marker = new google.maps.Marker ({ position: coords, map : gmap});
-            }
         });
     }
 

@@ -66,23 +66,18 @@ module.exports = function(grunt) {
         // files that we inline in the fat release (basically everything)
         // ONLY PUT ALREADY MINIFIED FILES IN HERE!
         externalJsFiles: [
-            //'extlib/js/jquery-1.8.3.min.js',
             'extlib/js/jquery-3.4.1.min.js',
-            //'extlib/js/bootstrap-3.0.0.min.js',
             'extlib/js/bootstrap.min.js',
             'extlib/js/highlight-7.3.pack.min.js'
         ],
         externalCssFiles: [
             'extlib/css/highlight.github.css',
-            'extlib/css/bootstrap.min.css',
-            //'extlib/css/bootstrap-3.0.0.min.css',
+            'extlib/css/bootstrap.min.css'
         ],
 
         // references we add in the slim release (stuff available on CDN locations)
         externalJsRefs: [
-            //'ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
             'ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js',
-            //'netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js',
             'yandex.st/highlightjs/7.3/highlight.min.js'
         ],
         externalCssRefs: [
@@ -202,10 +197,6 @@ module.exports = function(grunt) {
                 'index.tmpl'
             ],
             tasks: ['devel']
-        },
-        reload: {
-            port: 35729,
-            liveReload: {}
         }
     });
 
@@ -216,7 +207,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-shell');
-    grunt.loadNpmTasks('grunt-reload');
 
     grunt.registerTask('index_slim', 'Generate slim mdwiki.html, most scripts on CDN', function() {
         createIndex(grunt, 'slim');
@@ -234,7 +224,7 @@ module.exports = function(grunt) {
     /* Debug is basically the fat version but without any minifing */
     grunt.registerTask('release-debug', [ 'jshint', 'concat:dev', 'index_debug' ]);
 
-    grunt.registerTask('devel', [ 'release-debug', 'reload', 'watch' ]);
+    grunt.registerTask('devel', [ 'release-debug', 'watch' ]);
 
     grunt.registerTask('release',[
         'release-slim', 'release-fat', 'release-debug',

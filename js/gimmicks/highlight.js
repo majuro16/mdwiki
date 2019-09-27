@@ -1,16 +1,4 @@
 (function($) {
-    var highlightGimmick = {
-        name: 'highlight',
-        load: function() {
-            $.md.stage('gimmick').subscribe(function(done) {
-                highlight();
-                done();
-            });
-        }
-    };
-    $.md.registerGimmick(highlightGimmick);
-
-
     function highlight () {
         // marked adds lang-ruby, lang-csharp etc to the <code> block like in GFM
         var $codeblocks = $('pre code[class^=lang-]');
@@ -25,5 +13,16 @@
             var x = hljs.highlightBlock($this[0]);
         });
     }
+
+    var highlightGimmick = {
+        name: 'highlight',
+        load: function() {
+            $.md.stage('gimmick').subscribe(function(done) {
+                highlight();
+                done();
+            });
+        }
+    };
+    $.md.registerGimmick(highlightGimmick);
 
 }(jQuery));

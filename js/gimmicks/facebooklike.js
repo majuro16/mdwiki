@@ -5,20 +5,6 @@
     var fbScriptHref = $.md.prepareLink ('connect.facebook.net/' + code + '/all.js#xfbml=1', { forceHTTP: true });
     var fbscript ='(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id; js.src = "' + fbScriptHref + '"; fjs.parentNode.insertBefore(js, fjs);}(document, "script", "facebook-jssdk"));';
 
-    var facebookLikeGimmick = {
-        name: 'FacebookLike',
-        version: $.md.version,
-        once: function() {
-            $.md.linkGimmick(this, 'facebooklike', facebooklike);
-            $.md.registerScript(this, fbscript, {
-                license: 'APACHE2',
-                loadstage: 'postgimmick',
-                finishstage: 'all_ready'
-            });
-        }
-    };
-    $.md.registerGimmick(facebookLikeGimmick);
-
     function facebooklike($link, opt, text) {
         var default_options = {
             layout: 'standard',
@@ -47,4 +33,18 @@
             $this.replaceWith ($fb_div);
         });
     }
+
+    var facebookLikeGimmick = {
+        name: 'FacebookLike',
+        version: $.md.version,
+        once: function() {
+            $.md.linkGimmick(this, 'facebooklike', facebooklike);
+            $.md.registerScript(this, fbscript, {
+                license: 'APACHE2',
+                loadstage: 'postgimmick',
+                finishstage: 'all_ready'
+            });
+        }
+    };
+    $.md.registerGimmick(facebookLikeGimmick);
 }(jQuery));

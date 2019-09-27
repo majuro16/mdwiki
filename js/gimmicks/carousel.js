@@ -1,15 +1,6 @@
 (function($) {
     'use strict';
 
-    var themeChooserGimmick = {
-        name: 'Themes',
-        version: $.md.version,
-        once: function() {
-            $.md.linkGimmick(this, 'carousel', carousel);
-        }
-    };
-    $.md.registerGimmick(themeChooserGimmick);
-
     function carousel($link, opt, href) {
 
         var $c = $('<div id="myCarousel" class="carousel slide"></div>');
@@ -34,4 +25,14 @@
         $c.append('<a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>');
         $link.replaceWith($c);
     }
+
+    var themeChooserGimmick = {
+        name: 'Themes',
+        version: $.md.version,
+        once: function() {
+            $.md.linkGimmick(this, 'carousel', carousel);
+        }
+    };
+
+    $.md.registerGimmick(themeChooserGimmick);
 }(jQuery));

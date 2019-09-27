@@ -1,13 +1,4 @@
 (function($) {
-    var disqusGimmick = {
-        name: 'disqus',
-        version: $.md.version,
-        once: function() {
-            $.md.linkGimmick(this, 'disqus', disqus);
-        }
-    };
-    $.md.registerGimmick(disqusGimmick);
-
     var alreadyDone = false;
     var disqus = function($links, opt, text) {
         var default_options = {
@@ -62,4 +53,14 @@
             }
         });
     };
+
+    var disqusGimmick = {
+        name: 'disqus',
+        version: $.md.version,
+        once: function() {
+            $.md.linkGimmick(this, 'disqus', disqus);
+        }
+    };
+
+    $.md.registerGimmick(disqusGimmick);
 }(jQuery));

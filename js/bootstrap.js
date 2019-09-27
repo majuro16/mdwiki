@@ -1,123 +1,5 @@
 (function($) {
     'use strict';
-    // call the gimmick
-    $.mdbootstrap = function (method){
-        if ($.mdbootstrap.publicMethods[method]) {
-            return $.mdbootstrap.publicMethods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else {
-            $.error('Method ' + method + ' does not exist on jquery.mdbootstrap');
-        }
-    };
-    // simple wrapper around $().bind
-    $.mdbootstrap.events = [];
-    $.mdbootstrap.bind =  function (ev, func) {
-        $(document).bind (ev, func);
-        $.mdbootstrap.events.push (ev);
-    };
-    $.mdbootstrap.trigger = function (ev) {
-        $(document).trigger (ev);
-    };
-
-    var navStyle = '';
-
-    // PUBLIC API functions that are exposed
-    var publicMethods = {
-        bootstrapify: function () {
-            createPageSkeleton();
-            buildMenu ();
-            changeHeading();
-            replaceImageParagraphs();
-
-            $('table').addClass('table').addClass('table-bordered');
-            //pullRightBumper ();
-
-            // remove the margin for headings h1 and h2 that are the first
-            // on page
-            //if (navStyle == "sub" || (navStyle == "top" && $('#md-title').text ().trim ().length === 0))
-            //    $(".md-first-heading").css ("margin-top", "0");
-
-            // external content should run after gimmicks were run
-            $.md.stage('pregimmick').subscribe(function(done) {
-                if ($.md.config.useSideMenu !== false) {
-                    createPageContentMenu();
-                }
-                addFooter();
-                addAdditionalFooterText();
-                done();
-            });
-            $.md.stage('postgimmick').subscribe(function(done) {
-                adjustExternalContent();
-                highlightActiveLink();
-
-                done();
-            });
-        }
-    };
-    // register the public API functions
-    $.mdbootstrap.publicMethods = $.extend ({}, $.mdbootstrap.publicMethods, publicMethods);
-
-    // PRIVATE FUNCTIONS:
-
-    function buildTopNav() {
-        // replace with the navbar skeleton
-        if ($('#md-menu').length <= 0) {
-            return;
-        }
-        navStyle = 'top';
-        var $menuContent = $('#md-menu').children();
-
-        // $('#md-menu').addClass ('navbar navbar-default navbar-fixed-top');
-        // var menusrc = '';
-        // menusrc += '<div id="md-menu-inner" class="container">';
-        // menusrc += '<ul id="md-menu-ul" class="nav navbar-nav">';
-        // menusrc += '</ul></div>';
-
-        var navbar = '';
-        navbar += '<div id="md-main-navbar" class="navbar navbar-default navbar-fixed-top" role="navigation">';
-        navbar +=   '<div class="navbar-header">';
-        navbar +=     '<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">';
-        navbar +=       '<span class="sr-only">Toggle navigation</span>';
-        navbar +=       '<span class="icon-bar"></span>';
-        navbar +=       '<span class="icon-bar"></span>';
-        navbar +=       '<span class="icon-bar"></span>';
-        navbar +=     '</button>';
-        navbar +=     '<div id="logo" class="pull-left"></div>';
-        navbar +=     '<a class="navbar-brand" href="#"></a>';
-        navbar +=   '</div>';
-
-        navbar +=   '<div class="collapse navbar-collapse navbar-ex1-collapse">';
-        navbar +=     '<ul class="nav navbar-nav" />';
-        navbar +=     '<ul class="nav navbar-nav navbar-right" />';
-        navbar +=   '</div>';
-        navbar += '</div>';
-        var $navbar = $(navbar);
-
-        $navbar.appendTo('#md-menu');
-        // .eq(0) becase we dont want navbar-right to be appended to
-        $('#md-menu ul.nav').eq(0).append($menuContent);
-
-        // the menu should be the first element in the body
-        $('#md-menu').prependTo ('#md-all');
-
-        var brand_text = $('#md-menu h1').toptext();
-        $('#md-menu h1').remove();
-
-        if ($.md.config.hasOwnProperty('logo')) {
-            $("#logo").css({
-                "margin-top": "8px",
-                "margin-left": "8px"
-            }).html('<img height="32" src="' + $.md.config.logo + '">');
-        }
-
-        $('a.navbar-brand').html(brand_text);
-
-        // initial offset
-        $('#md-body').css('margin-top', '70px');
-        $.md.stage('pregimmick').subscribe(function (done) {
-            check_offset_to_navbar();
-            done();
-        });
-    }
     // the navbar has different height depending on theme, number of navbar entries,
     // and window/device width. Therefore recalculate on start and upon window resize
     function set_offset_to_navbar () {
@@ -172,6 +54,70 @@
 
         $('#md-menu-container').insertAfter ($('#md-title-container'));
         */
+    }
+
+    var navStyle = '';
+
+    // PRIVATE FUNCTIONS:
+    function buildTopNav() {
+        // replace with the navbar skeleton
+        if ($('#md-menu').length <= 0) {
+            return;
+        }
+        navStyle = 'top';
+        var $menuContent = $('#md-menu').children();
+
+        // $('#md-menu').addClass ('navbar navbar-default navbar-fixed-top');
+        // var menusrc = '';
+        // menusrc += '<div id="md-menu-inner" class="container">';
+        // menusrc += '<ul id="md-menu-ul" class="nav navbar-nav">';
+        // menusrc += '</ul></div>';
+
+        var navbar = '';
+        navbar += '<div id="md-main-navbar" class="navbar navbar-default navbar-fixed-top" role="navigation">';
+        navbar +=   '<div class="navbar-header">';
+        navbar +=     '<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">';
+        navbar +=       '<span class="sr-only">Toggle navigation</span>';
+        navbar +=       '<span class="icon-bar"></span>';
+        navbar +=       '<span class="icon-bar"></span>';
+        navbar +=       '<span class="icon-bar"></span>';
+        navbar +=     '</button>';
+        //navbar +=     '<div id="logo" class="pull-left"></div>';
+        navbar +=     '<a class="navbar-brand" href="#"></a>';
+        navbar +=   '</div>';
+
+        navbar +=   '<div class="collapse navbar-collapse navbar-ex1-collapse">';
+        navbar +=     '<ul class="nav navbar-nav" />';
+        navbar +=     '<ul class="nav navbar-nav navbar-right" />';
+        navbar +=   '</div>';
+        navbar += '</div>';
+        var $navbar = $(navbar);
+
+        $navbar.appendTo('#md-menu');
+        // .eq(0) becase we dont want navbar-right to be appended to
+        $('#md-menu ul.nav').eq(0).append($menuContent);
+
+        // the menu should be the first element in the body
+        $('#md-menu').prependTo ('#md-all');
+
+        var brand_text = $('#md-menu h1').toptext();
+        $('#md-menu h1').remove();
+
+        // if ($.md.config.hasOwnProperty('logo')) {
+        //     $("#logo").css({
+        //         "margin-top": "8px",
+        //         "margin-left": "8px"
+        //     }).html('<img height="32" src="' + $.md.config.logo + '">');
+        // }
+
+        $('a.navbar-brand').html(brand_text);
+
+        // initial offset
+        $('#md-body').css('margin-top', '70px');
+        $.md.stage('pregimmick').subscribe(function (done) {
+            check_offset_to_navbar();
+            done();
+        });
     }
 
     function buildMenu () {
@@ -237,6 +183,7 @@
         // call the user specifed menu function
         buildTopNav();
     }
+
     function isVisibleInViewport(e) {
         var el = $(e);
         var top = $(window).scrollTop();
@@ -268,7 +215,6 @@
             // <md-left-column> anymore and therefore does not inherit
             // its width. On every resize, change the class accordingly
             var width_left_column = $('#md-page-menu').css('width');
-            console.log(width_left_column);
             $('#md-page-menu').css('width', width_left_column);
         };
 
@@ -360,12 +306,12 @@
 
     }
     function pullRightBumper (){
- /*     $("span.bumper").each (function () {
-			$this = $(this);
-			$this.prev().addClass ("pull-right");
-		});
-		$('span.bumper').addClass ('pull-right');
-*/
+        /*     $("span.bumper").each (function () {
+                   $this = $(this);
+                   $this.prev().addClass ("pull-right");
+               });
+               $('span.bumper').addClass ('pull-right');
+       */
     }
 
     function changeHeading() {
@@ -380,13 +326,13 @@
         if ($('#md-menu').find ('li').length === 0) {
             return;
         }
-		var filename = window.location.hash;
+        var filename = window.location.hash;
 
-		if (filename.length === 0) {
+        if (filename.length === 0) {
             filename = '#!index.md';
         }
-		var selector = 'li:has(a[href="' + filename + '"])';
-		$('#md-menu').find (selector).addClass ('active');
+        var selector = 'li:has(a[href="' + filename + '"])';
+        $('#md-menu').find (selector).addClass ('active');
     }
 
     // replace all <p> around images with a <div class="thumbnail" >
@@ -515,4 +461,59 @@
             $('.md-copyright-footer #md-footer-additional').html(text);
         }
     }
+
+    // call the gimmick
+    $.mdbootstrap = function (method){
+        if ($.mdbootstrap.publicMethods[method]) {
+            return $.mdbootstrap.publicMethods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else {
+            $.error('Method ' + method + ' does not exist on jquery.mdbootstrap');
+        }
+    };
+    // simple wrapper around $().bind
+    $.mdbootstrap.events = [];
+    $.mdbootstrap.bind =  function (ev, func) {
+        $(document).bind (ev, func);
+        $.mdbootstrap.events.push (ev);
+    };
+    $.mdbootstrap.trigger = function (ev) {
+        $(document).trigger (ev);
+    };
+
+    // PUBLIC API functions that are exposed
+    var publicMethods = {
+        bootstrapify: function () {
+            createPageSkeleton();
+            buildMenu ();
+            changeHeading();
+            replaceImageParagraphs();
+
+            $('table').addClass('table').addClass('table-bordered');
+            //pullRightBumper ();
+
+            // remove the margin for headings h1 and h2 that are the first
+            // on page
+            //if (navStyle == "sub" || (navStyle == "top" && $('#md-title').text ().trim ().length === 0))
+            //    $(".md-first-heading").css ("margin-top", "0");
+
+            // external content should run after gimmicks were run
+            $.md.stage('pregimmick').subscribe(function(done) {
+                if ($.md.config.useSideMenu !== false) {
+                    createPageContentMenu();
+                }
+                addFooter();
+                addAdditionalFooterText();
+                done();
+            });
+            $.md.stage('postgimmick').subscribe(function(done) {
+                adjustExternalContent();
+                highlightActiveLink();
+
+                done();
+            });
+        }
+    };
+    // register the public API functions
+    $.mdbootstrap.publicMethods = $.extend ({}, $.mdbootstrap.publicMethods, publicMethods);
+
 }(jQuery));

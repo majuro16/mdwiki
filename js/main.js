@@ -79,46 +79,6 @@
         return uglyHtml;
     }
 
-    function registerFetchMarkdown() {
-
-        var md = '';
-
-        $.md.stage('init').subscribe(function(done) {
-            var ajaxReq = {
-                url: $.md.mainHref,
-                dataType: 'text'
-            };
-            $.ajax(ajaxReq).done(function(data) {
-                // TODO do this elsewhere
-                md = data;
-                done();
-            }).fail(function() {
-                var log = $.md.getLogger();
-                log.fatal('Could not get ' + $.md.mainHref);
-                done();
-            });
-        });
-
-        // find baseUrl
-        $.md.stage('transform').subscribe(function(done) {
-            var len = $.md.mainHref.lastIndexOf('/');
-            var baseUrl = $.md.mainHref.substring(0, len+1);
-            $.md.baseUrl = baseUrl;
-            done();
-        });
-
-        $.md.stage('transform').subscribe(function(done) {
-            var uglyHtml = transformMarkdown(md);
-            $('#md-content').html(uglyHtml);
-            md = '';
-            var dfd = $.Deferred();
-            loadExternalIncludes(dfd);
-            dfd.always(function () {
-                done();
-            });
-        });
-    }
-
     // load [include](/foo/bar.md) external links
     function loadExternalIncludes(parent_dfd) {
 
@@ -164,21 +124,61 @@
                 url: href,
                 dataType: 'text'
             })
-            .done(function (data) {
-                var $html = $(transformMarkdown(data));
-                if (text.startsWith('preview:')) {
-                    // only insert the selected number of paragraphs; default 3
-                    var num_preview_elements = parseInt(text.substring(8), 10) ||3;
-                    var $preview = selectPreviewElements ($html, num_preview_elements);
-                    $preview.last().append('<a href="' + href +'"> ...read more &#10140;</a>');
-                    $preview.insertBefore($el.parent('p').eq(0));
-                    $el.remove();
-                } else {
-                    $html.insertAfter($el.parents('p'));
-                    $el.remove();
-                }
-            }).always(function () {
+                .done(function (data) {
+                    var $html = $(transformMarkdown(data));
+                    if (text.startsWith('preview:')) {
+                        // only insert the selected number of paragraphs; default 3
+                        var num_preview_elements = parseInt(text.substring(8), 10) ||3;
+                        var $preview = selectPreviewElements ($html, num_preview_elements);
+                        $preview.last().append('<a href="' + href +'"> ...read more &#10140;</a>');
+                        $preview.insertBefore($el.parent('p').eq(0));
+                        $el.remove();
+                    } else {
+                        $html.insertAfter($el.parents('p'));
+                        $el.remove();
+                    }
+                }).always(function () {
                 latch.countDown();
+            });
+        });
+    }
+
+    function registerFetchMarkdown() {
+
+        var md = '';
+
+        $.md.stage('init').subscribe(function(done) {
+            var ajaxReq = {
+                url: $.md.mainHref,
+                dataType: 'text'
+            };
+            $.ajax(ajaxReq).done(function(data) {
+                // TODO do this elsewhere
+                md = data;
+                done();
+            }).fail(function() {
+                var log = $.md.getLogger();
+                log.fatal('Could not get ' + $.md.mainHref);
+                done();
+            });
+        });
+
+        // find baseUrl
+        $.md.stage('transform').subscribe(function(done) {
+            var len = $.md.mainHref.lastIndexOf('/');
+            var baseUrl = $.md.mainHref.substring(0, len+1);
+            $.md.baseUrl = baseUrl;
+            done();
+        });
+
+        $.md.stage('transform').subscribe(function(done) {
+            var uglyHtml = transformMarkdown(md);
+            $('#md-content').html(uglyHtml);
+            md = '';
+            var dfd = $.Deferred();
+            loadExternalIncludes(dfd);
+            dfd.always(function () {
+                done();
             });
         });
     }
@@ -378,42 +378,6 @@
         });
 
     }
-    function loadContent(href) {
-        $.md.mainHref = href;
-
-        registerFetchMarkdown();
-        registerClearContent();
-
-        // find out which link gimmicks we need
-        $.md.stage('ready').subscribe(function(done) {
-            $.md.initializeGimmicks();
-            $.md.registerLinkGimmicks();
-            done();
-        });
-
-        // wire up the load method of the modules
-        $.each($.md.gimmicks, function(i, module) {
-            if (module.load === undefined) {
-                return;
-            }
-            $.md.stage('load').subscribe(function(done) {
-                module.load();
-                done();
-            });
-        });
-
-        $.md.stage('ready').subscribe(function(done) {
-            $.md('createBasicSkeleton');
-            done();
-        });
-
-        $.md.stage('bootstrap').subscribe(function(done){
-            $.mdbootstrap('bootstrapify');
-            processPageLinks($('#md-content'), $.md.baseUrl);
-            done();
-        });
-        runStages();
-    }
 
     function runStages() {
 
@@ -467,6 +431,43 @@
         // trigger the whole process by runing the init stage
         $.md.stage('init').run();
         return;
+    }
+
+    function loadContent(href) {
+        $.md.mainHref = href;
+
+        registerFetchMarkdown();
+        registerClearContent();
+
+        // find out which link gimmicks we need
+        $.md.stage('ready').subscribe(function(done) {
+            $.md.initializeGimmicks();
+            $.md.registerLinkGimmicks();
+            done();
+        });
+
+        // wire up the load method of the modules
+        $.each($.md.gimmicks, function(i, module) {
+            if (module.load === undefined) {
+                return;
+            }
+            $.md.stage('load').subscribe(function(done) {
+                module.load();
+                done();
+            });
+        });
+
+        $.md.stage('ready').subscribe(function(done) {
+            $.md('createBasicSkeleton');
+            done();
+        });
+
+        $.md.stage('bootstrap').subscribe(function(done){
+            $.mdbootstrap('bootstrapify');
+            processPageLinks($('#md-content'), $.md.baseUrl);
+            done();
+        });
+        runStages();
     }
 
     function extractHashData() {

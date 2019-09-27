@@ -1,28 +1,4 @@
 (function($) {
-    var publicMethods = {
-        createBasicSkeleton: function() {
-
-            setPageTitle();
-            wrapParagraphText();
-            linkImagesToSelf();
-            groupImages();
-            removeBreaks();
-            addInpageAnchors ();
-
-            $.md.stage('all_ready').subscribe(function(done) {
-                if ($.md.inPageAnchor !== '') {
-                    $.md.util.wait(500).then(function () {
-                        $.md.scrollToInPageAnchor($.md.inPageAnchor);
-                    });
-                }
-                done();
-            });
-            return;
-
-        }
-    };
-    $.md.publicMethods = $.extend ({}, $.md.publicMethods, publicMethods);
-
     // set the page title to the browser document title, optionally picking
     // the first h1 element as title if no title is given
     function setPageTitle() {
@@ -39,6 +15,39 @@
             $('#md-title').remove();
         }
     }
+
+    function getFloatClass (par) {
+        var $p = $(par);
+        var floatClass = '';
+
+        // reduce content of the paragraph to images
+        var nonTextContents = $p.contents().filter(function () {
+            if (this.tagName === 'IMG' || this.tagName === 'IFRAME') {
+                return true;
+            }
+            else if (this.tagName === 'A') {
+                return $(this).find('img').length > 0;
+            }
+            else {
+                return $.trim($(this).text ()).length > 0;
+            }
+        });
+        // check the first element - if its an image or a link with image, we go left
+        var elem = nonTextContents[0];
+        if (elem !== undefined && elem !== null) {
+            if (elem.tagName === 'IMG' || elem.tagName === 'IFRAME') {
+                floatClass = 'md-float-left';
+            }
+            else if (elem.tagName === 'A' && $(elem).find('img').length > 0) {
+                floatClass = 'md-float-left';
+            }
+            else {
+                floatClass = 'md-float-right';
+            }
+        }
+        return floatClass;
+    }
+
     function wrapParagraphText () {
         // TODO is this true for marked.js?
 
@@ -46,16 +55,16 @@
         // but the containing text is not wrapped. Make sure to wrap the text in the
         // paragraph into a <div>
 
-		// this also moves ANY child tags to the front of the paragraph!
-		$('#md-content p').each (function () {
-			var $p = $(this);
-			// nothing to do for paragraphs without text
-			if ($.trim($p.text ()).length === 0) {
-				// make sure no whitespace are in the p and then exit
-				//$p.text ('');
-				return;
-			}
-			// children elements of the p
+        // this also moves ANY child tags to the front of the paragraph!
+        $('#md-content p').each (function () {
+            var $p = $(this);
+            // nothing to do for paragraphs without text
+            if ($.trim($p.text ()).length === 0) {
+                // make sure no whitespace are in the p and then exit
+                //$p.text ('');
+                return;
+            }
+            // children elements of the p
             var children = $p.contents ().filter (function () {
                 var $child =  $(this);
                 // we extract images and hyperlinks with images out of the paragraph
@@ -82,11 +91,12 @@
             // we mark that paragraph to be a floating environment
             // TODO determine floatenv left/right
             $p.addClass ('md-floatenv').addClass (floatClass);
-		});
-	}
-	function removeBreaks (){
-		// since we use non-markdown-standard line wrapping, we get lots of
-		// <br> elements we don't want.
+        });
+    }
+
+    function removeBreaks (){
+        // since we use non-markdown-standard line wrapping, we get lots of
+        // <br> elements we don't want.
 
         // remove a leading <br> from floatclasses, that happen to
         // get insertet after an image
@@ -100,37 +110,7 @@
         // remove any breaks from image groups
         $('.md-image-group').find ('br').remove ();
     }
-	function getFloatClass (par) {
-		var $p = $(par);
-		var floatClass = '';
 
-		// reduce content of the paragraph to images
-		var nonTextContents = $p.contents().filter(function () {
-			if (this.tagName === 'IMG' || this.tagName === 'IFRAME') {
-                return true;
-            }
-			else if (this.tagName === 'A') {
-                return $(this).find('img').length > 0;
-            }
-			else {
-				return $.trim($(this).text ()).length > 0;
-			}
-		});
-		// check the first element - if its an image or a link with image, we go left
-		var elem = nonTextContents[0];
-		if (elem !== undefined && elem !== null) {
-			if (elem.tagName === 'IMG' || elem.tagName === 'IFRAME') {
-                floatClass = 'md-float-left';
-            }
-			else if (elem.tagName === 'A' && $(elem).find('img').length > 0) {
-                floatClass = 'md-float-left';
-            }
-			else {
-                floatClass = 'md-float-right';
-            }
-		}
-		return floatClass;
-	}
     // images are put in the same image group as long as there is
     // not separating paragraph between them
     function groupImages() {
@@ -143,7 +123,9 @@
     // needed since we scale down images via css and want them to be accessible
     // in original format
     function linkImagesToSelf () {
-        function selectNonLinkedImages () {
+        var $images;
+
+        function selectNonLinkedImages() {
             // only select images that do not have a non-empty parent link
             $images = $('img').filter(function(index) {
                 var $parent_link = $(this).parents('a').eq(0);
@@ -153,7 +135,9 @@
             });
             return $images;
         }
-        var $images = selectNonLinkedImages ();
+
+        $images = selectNonLinkedImages();
+
         return $images.each(function() {
             var $this = $(this);
             var img_src = $this.attr('src');
@@ -245,5 +229,29 @@
             }
         });
     };
+
+    var publicMethods = {
+        createBasicSkeleton: function() {
+
+            setPageTitle();
+            wrapParagraphText();
+            linkImagesToSelf();
+            groupImages();
+            removeBreaks();
+            addInpageAnchors ();
+
+            $.md.stage('all_ready').subscribe(function(done) {
+                if ($.md.inPageAnchor !== '') {
+                    $.md.util.wait(500).then(function () {
+                        $.md.scrollToInPageAnchor($.md.inPageAnchor);
+                    });
+                }
+                done();
+            });
+            return;
+
+        }
+    };
+    $.md.publicMethods = $.extend ({}, $.md.publicMethods, publicMethods);
 
 }(jQuery));

@@ -1,6 +1,8 @@
 (function($) {
     'use strict';
 
+    var log = $.md.getLogger();
+
     var themes = [
         { name: 'bootstrap', url: 'netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css' },
         { name: 'amelia', url: 'netdna.bootstrapcdn.com/bootswatch/3.0.0/amelia/bootstrap.min.css' },
@@ -16,19 +18,8 @@
         { name: 'united', url: 'netdna.bootstrapcdn.com/bootswatch/3.0.0/united/bootstrap.min.css' },
         { name: 'yeti', url: 'netdna.bootstrapcdn.com/bootswatch/3.0.2/yeti/bootstrap.min.css' }
     ];
+
     var useChooser = false;
-    var themeChooserGimmick = {
-        name: 'Themes',
-        version: $.md.version,
-        once: function() {
-            $.md.linkGimmick(this, 'themechooser', themechooser, 'skel_ready');
-            $.md.linkGimmick(this, 'theme', apply_theme);
-
-        }
-    };
-    $.md.registerGimmick(themeChooserGimmick);
-
-    var log = $.md.getLogger();
 
     var set_theme = function(theme) {
         theme.inverse = theme.inverse || false;
@@ -91,6 +82,13 @@
         $links.remove();
     };
 
+    var restore_theme = function(opt) {
+        if (window.localStorage.theme) {
+            opt = $.extend({ name: window.localStorage.theme }, opt);
+            set_theme(opt);
+        }
+    };
+
     var themechooser = function($links, opt, text) {
 
         useChooser = true;
@@ -136,10 +134,14 @@
         });
     };
 
-    var restore_theme = function(opt) {
-        if (window.localStorage.theme) {
-            opt = $.extend({ name: window.localStorage.theme }, opt);
-            set_theme(opt);
+    var themeChooserGimmick = {
+        name: 'Themes',
+        version: $.md.version,
+        once: function() {
+            $.md.linkGimmick(this, 'themechooser', themechooser, 'skel_ready');
+            $.md.linkGimmick(this, 'theme', apply_theme);
+
         }
     };
+    $.md.registerGimmick(themeChooserGimmick);
 }(jQuery));

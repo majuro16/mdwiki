@@ -1,37 +1,5 @@
 (function($) {
     //'use strict';
-    var alertsGimmick = {
-        name: 'alerts',
-        // TODO
-        //version: $.md.version,
-        load: function() {
-            $.md.stage('bootstrap').subscribe(function(done) {
-                createAlerts();
-                done();
-            });
-        }
-    };
-    $.md.registerGimmick(alertsGimmick);
-
-    // takes a standard <img> tag and adds a hyperlink to the image source
-    // needed since we scale down images via css and want them to be accessible
-    // in original format
-    function createAlerts() {
-        var matches = $(select_paragraphs());
-        matches.each(function() {
-            var $p = $(this.p);
-            var type = this.alertType;
-            $p.addClass('alert');
-
-            if (type === 'note') {
-                $p.addClass('alert-info');
-            } else if (type === 'hint') {
-                $p.addClass('alert-success');
-            } else if (type === 'warning') {
-                $p.addClass('alert-warning');
-            }
-        });
-    }
 
     // picks out the paragraphs that start with a trigger word
     function select_paragraphs() {
@@ -68,4 +36,38 @@
         });
         return matches;
     }
+
+    // takes a standard <img> tag and adds a hyperlink to the image source
+    // needed since we scale down images via css and want them to be accessible
+    // in original format
+    function createAlerts() {
+        var matches = $(select_paragraphs());
+        matches.each(function() {
+            var $p = $(this.p);
+            var type = this.alertType;
+            $p.addClass('alert');
+
+            if (type === 'note') {
+                $p.addClass('alert-info');
+            } else if (type === 'hint') {
+                $p.addClass('alert-success');
+            } else if (type === 'warning') {
+                $p.addClass('alert-warning');
+            }
+        });
+    }
+
+    var alertsGimmick = {
+        name: 'alerts',
+        // TODO
+        //version: $.md.version,
+        load: function() {
+            $.md.stage('bootstrap').subscribe(function(done) {
+                createAlerts();
+                done();
+            });
+        }
+    };
+
+    $.md.registerGimmick(alertsGimmick);
 }(jQuery));

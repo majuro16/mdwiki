@@ -1,13 +1,5 @@
 (function($) {
     'use strict';
-    var iframeGimmick= {
-        name: 'iframe',
-        version: $.md.version,
-        once: function() {
-            $.md.linkGimmick(this, 'iframe', create_iframe);
-        }
-    };
-    $.md.registerGimmick(iframeGimmick);
 
     function create_iframe($links, opt, text) {
         return $links.each (function (i, link){
@@ -40,4 +32,13 @@
 
         });
     }
+
+    var iframeGimmick= {
+        name: 'iframe',
+        version: $.md.version,
+        once: function() {
+            $.md.linkGimmick(this, 'iframe', create_iframe);
+        }
+    };
+    $.md.registerGimmick(iframeGimmick);
 }(jQuery));
