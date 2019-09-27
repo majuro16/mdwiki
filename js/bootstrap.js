@@ -81,6 +81,7 @@
         navbar +=       '<span class="icon-bar"></span>';
         navbar +=       '<span class="icon-bar"></span>';
         navbar +=     '</button>';
+        navbar +=     '<div id="logo" class="pull-left"></div>';
         navbar +=     '<a class="navbar-brand" href="#"></a>';
         navbar +=   '</div>';
 
@@ -100,7 +101,15 @@
 
         var brand_text = $('#md-menu h1').toptext();
         $('#md-menu h1').remove();
-        $('a.navbar-brand').text(brand_text);
+
+        if ($.md.config.hasOwnProperty('logo')) {
+            $("#logo").css({
+                "margin-top": "8px",
+                "margin-left": "8px"
+            }).html('<img height="32" src="' + $.md.config.logo + '">');
+        }
+
+        $('a.navbar-brand').html(brand_text);
 
         // initial offset
         $('#md-body').css('margin-top', '70px');
@@ -258,7 +267,8 @@
             // if the page menu is affixed, it is not a child of the
             // <md-left-column> anymore and therefore does not inherit
             // its width. On every resize, change the class accordingly
-            var width_left_column = $('#md-left-column').css('width');
+            var width_left_column = $('#md-page-menu').css('width');
+            console.log(width_left_column);
             $('#md-page-menu').css('width', width_left_column);
         };
 

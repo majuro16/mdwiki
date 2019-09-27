@@ -66,23 +66,27 @@ module.exports = function(grunt) {
         // files that we inline in the fat release (basically everything)
         // ONLY PUT ALREADY MINIFIED FILES IN HERE!
         externalJsFiles: [
-            'extlib/js/jquery-1.8.3.min.js',
-            'extlib/js/bootstrap-3.0.0.min.js',
+            //'extlib/js/jquery-1.8.3.min.js',
+            'extlib/js/jquery-3.4.1.min.js',
+            //'extlib/js/bootstrap-3.0.0.min.js',
+            'extlib/js/bootstrap.min.js',
             'extlib/js/highlight-7.3.pack.min.js'
         ],
         externalCssFiles: [
             'extlib/css/highlight.github.css',
-            'extlib/css/bootstrap-3.0.0.min.css',
+            'extlib/css/bootstrap.min.css',
+            //'extlib/css/bootstrap-3.0.0.min.css',
         ],
 
         // references we add in the slim release (stuff available on CDN locations)
         externalJsRefs: [
-            'ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
-            'netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js',
+            //'ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
+            'ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js',
+            //'netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js',
             'yandex.st/highlightjs/7.3/highlight.min.js'
         ],
         externalCssRefs: [
-            'netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css',
+            //'netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css',
             'yandex.st/highlightjs/7.3/styles/github.min.css'
 //            'www.3solarmasses.com/retriever-bootstrap/css/retriever.css'
 //            '3solarmasses.com/corgi-bootstrap/css/corgi.css'
