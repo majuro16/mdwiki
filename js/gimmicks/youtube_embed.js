@@ -1,5 +1,16 @@
 (function($) {
     //'use strict';
+    var youtubeGimmick = {
+        name: 'youtube',
+        load: function() {
+            $.md.stage('gimmick').subscribe(function(done) {
+                youtubeLinkToIframe();
+                done();
+            });
+        }
+    } ;
+    $.md.registerGimmick(youtubeGimmick);
+
     function youtubeLinkToIframe() {
         var $youtube_links = $('a[href*=youtube\\.com]:empty, a[href*=youtu\\.be]:empty');
 
@@ -23,13 +34,4 @@
             }
         });
     }
-    var youtubeGimmick = new MDwiki.Core.Module();
-    youtubeGimmick.init = function () {
-        $.md.stage('gimmick').subscribe(function(done) {
-            youtubeLinkToIframe();
-            done();
-        });
-    };
-    $.md.wiki.gimmicks.registerModule(youtubeGimmick);
-
 }(jQuery));

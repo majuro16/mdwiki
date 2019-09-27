@@ -10,8 +10,8 @@ function googlemapsReady() {
     //'use strict';
     var scripturl = 'http://maps.google.com/maps/api/js?sensor=false&callback=googlemapsReady';
 
-    function googlemaps(trigger, text, options, domElement) {
-        var $maps_links = $(domElement);
+    function googlemaps($links, opt, text) {
+        var $maps_links = $links;
         var counter = (new Date()).getTime ();
         return $maps_links.each(function(i,e) {
             var $link = $(e);
@@ -21,7 +21,7 @@ function googlemapsReady() {
                 scrollwheel: false,
                 maptype: 'roadmap'
             };
-            var options = $.extend({}, default_options, options);
+            var options = $.extend({}, default_options, opt);
             if (options.address === undefined) {
                 options.address = $link.attr ('href');
             }
@@ -68,23 +68,34 @@ function googlemapsReady() {
         });
     }
 
-    var googleMapsGimmick = new MDwiki.Gimmick.Gimmick('googlemaps');
-    googleMapsGimmick.initFunction(function(stageLoader) {
-        googlemapsLoadDone = $.Deferred();
+    var googleMapsGimmick = {
+        name: 'googlemaps',
+        version: $.md.version,
+        once: function() {
+            googlemapsLoadDone = $.Deferred();
 
-        // googleMapsGimmick.subscribeGimmick('googlemaps', googlemaps);
-        // load the googlemaps js from the google server
-        var script = new MDwiki.Gimmick.ScriptResource (scripturl);
-        googleMapsGimmick.registerScriptResource(script);
+            // register the gimmick:googlemaps identifier
+            $.md.linkGimmick(this, 'googlemaps', googlemaps);
 
-        stageLoader('pregimmick').subscribe(function(done) {
-            // defer the pregimmick phase until the google script fully loaded
-            googlemapsLoadDone.done(function() {
-                done();
+            // load the googlemaps js from the google server
+            $.md.registerScript(this, scripturl, {
+                license: 'EXCEPTION',
+                loadstage: 'skel_ready',
+                finishstage: 'bootstrap'
             });
-        });
-    });
-    var handler = new MDwiki.Gimmick.GimmickHandler('link', googlemaps);
-    googleMapsGimmick.addHandler(handler);
-    $.md.wiki.gimmicks.registerGimmick(googleMapsGimmick);
+
+            $.md.stage('bootstrap').subscribe(function(done) {
+                // defer the pregimmick phase until the google script fully loaded
+                if ($.md.triggerIsActive('googlemaps')) {
+                    googlemapsLoadDone.done(function() {
+                        done();
+                    });
+                } else {
+                    // immediately return as there will never a load success
+                    done();
+                }
+            });
+        }
+    };
+    $.md.registerGimmick(googleMapsGimmick);
 }(jQuery));

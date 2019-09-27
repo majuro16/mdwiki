@@ -1,56 +1,71 @@
 (function($) {
-
     //'use strict';
-    var alertsGimmick = new MDwiki.Gimmick.Gimmick('alert');
-    var alertHandler = new MDwiki.Gimmick.GimmickHandler('singleline');
-    alertHandler.callback = function(trigger, text, options, domElement) {
-        var type = get_alert_type(text);
-        if (type === null) return;
-
-        var $p = $('<p/>');
-        $p.addClass('alert');
-        if (type === 'note') {
-            $p.addClass('alert-info');
-        } else if (type === 'hint') {
-            $p.addClass('alert-success');
-        } else if (type === 'warning') {
-            $p.addClass('alert-warning');
-        } else if (type === 'danger') {
-            $p.addClass('alert-danger');
+    var alertsGimmick = {
+        name: 'alerts',
+        // TODO
+        //version: $.md.version,
+        load: function() {
+            $.md.stage('bootstrap').subscribe(function(done) {
+                createAlerts();
+                done();
+            });
         }
-        $p.text(text);
-        $(domElement).replaceWith($p);
     };
-    alertsGimmick.addHandler(alertHandler);
-    $.md.wiki.gimmicks.registerGimmick(alertsGimmick);
+    $.md.registerGimmick(alertsGimmick);
 
-    function get_alert_type(text) {
-        var note = ['note', 'beachte' ];
-        var warning = [ 'achtung', 'attention', 'warnung', 'warning', 'atención', 'guarda', 'advertimiento'];
-        var hint = ['hint', 'tipp', 'tip', 'hinweis', 'astuce'];
-        var danger = ['danger', 'achtung', 'peligro'];
-        var exp = note.concat(warning);
-        exp = exp.concat(hint);
-        var txt = text.toLowerCase ();
+    // takes a standard <img> tag and adds a hyperlink to the image source
+    // needed since we scale down images via css and want them to be accessible
+    // in original format
+    function createAlerts() {
+        var matches = $(select_paragraphs());
+        matches.each(function() {
+            var $p = $(this.p);
+            var type = this.alertType;
+            $p.addClass('alert');
 
-        // check against each expression
-        var returnval = null;
-        $(exp).each (function (i,trigger) {
-            // we match only paragrachps in which the 'trigger' expression
-            // is follow by a ! or :
-            var re = new RegExp (trigger + '(:|!)+.*','i');
-            if (txt.match (re) !== null) {
-                if ($.inArray(trigger, note) >= 0) {
-                    returnval = 'note';
-                } else if ($.inArray(trigger, warning) >= 0) {
-                    returnval = 'warning';
-                } else if ($.inArray(trigger, hint) >= 0) {
-                    returnval = 'hint';
-                } else if ($.inArray(trigger, danger) >= 0) {
-                    returnval = 'danger';
-                }
+            if (type === 'note') {
+                $p.addClass('alert-info');
+            } else if (type === 'hint') {
+                $p.addClass('alert-success');
+            } else if (type === 'warning') {
+                $p.addClass('alert-warning');
             }
         });
-        return returnval;
+    }
+
+    // picks out the paragraphs that start with a trigger word
+    function select_paragraphs() {
+        var note = ['note', 'beachte' ];
+        var warning = [ 'achtung', 'attention', 'warnung', 'warning', 'atención', 'guarda', 'advertimiento' ];
+        var hint = ['hint', 'tipp', 'tip', 'hinweis'];
+        var exp = note.concat(warning);
+        exp = exp.concat(hint);
+        var matches = [];
+
+        $('p').filter (function () {
+            var $par = $(this);
+            // check against each expression
+            $(exp).each (function (i,trigger) {
+                var txt = $par.text().toLowerCase ();
+                // we match only paragrachps in which the 'trigger' expression
+                // is follow by a ! or :
+                var re = new RegExp (trigger + '(:|!)+.*','i');
+                var alertType = 'none';
+                if (txt.match (re) !== null) {
+                    if ($.inArray(trigger, note) >= 0) {
+                        alertType = 'note';
+                    } else if ($.inArray(trigger, warning) >= 0) {
+                        alertType = 'warning';
+                    } else if ($.inArray(trigger, hint) >= 0) {
+                        alertType = 'hint';
+                    }
+                    matches.push ({
+                        p: $par,
+                        alertType: alertType
+                    });
+                }
+            });
+        });
+        return matches;
     }
 }(jQuery));

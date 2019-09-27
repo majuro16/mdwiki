@@ -62,9 +62,18 @@
             $this.replaceWith($img);
         });
     }
-
-    var gimmick = new MDwiki.Core.Gimmick();
-    gimmick.addHandler('yuml', yuml);
-    $.md.wiki.gimmicks.registerGimmick(gimmick);
+    var yumlGimmick = {
+        name: 'yuml',
+        version: $.md.version,
+        once: function() {
+            $.md.linkGimmick(this, 'yuml', yuml);
+            $.md.registerScript(this, '', {
+                license: 'LGPL',
+                loadstage: 'postgimmick',
+                finishstage: 'all_ready'
+            });
+        }
+    };
+    $.md.registerGimmick(yumlGimmick);
 
 }(jQuery));
