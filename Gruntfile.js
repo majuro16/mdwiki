@@ -56,36 +56,36 @@ module.exports = function(grunt) {
 
         // files that we always inline (stuff not available on CDN)
         internalCssFiles: [
-            'extlib/css/colorbox.css'
+            'node_modules/jquery-colorbox/example1/colorbox.css'
         ],
         // ONLY PUT ALREADY MINIFIED FILES IN HERE!
         internalJsFiles: [
-            'extlib/js/jquery.colorbox.min.js'
+            'node_modules/jquery-colorbox/jquery.colorbox-min.js'
         ],
 
         // files that we inline in the fat release (basically everything)
         // ONLY PUT ALREADY MINIFIED FILES IN HERE!
         externalJsFiles: [
-            'extlib/js/jquery-3.4.1.min.js',
-            'extlib/js/bootstrap.min.js',
-            'extlib/js/highlight-7.3.pack.min.js'
+            'node_modules/jquery/dist/jquery.min.js',
+            'node_modules/bootstrap/dist/js/bootstrap.min.js',
+            //'node_modules/highlightjs/highlight.pack.min.js',
+            //'extlib/js/highlight-7.3.pack.min.js',
+            'extlib/js/highlight.min.js',
+            //'cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js'
         ],
         externalCssFiles: [
-            'extlib/css/highlight.github.css',
-            'extlib/css/bootstrap.min.css'
+            //'node_modules/highlightjs/styles/github.css',
+            //'extlib/css/highlight.github.css',
+            'extlib/css/default.min.css',
+            //'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/default.min.css',
+            'node_modules/bootstrap/dist/css/bootstrap.min.css'
         ],
 
         // references we add in the slim release (stuff available on CDN locations)
         externalJsRefs: [
-            'ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js',
-            'yandex.st/highlightjs/7.3/highlight.min.js'
+            'cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js'
         ],
-        externalCssRefs: [
-            //'netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css',
-            'yandex.st/highlightjs/7.3/styles/github.min.css'
-//            'www.3solarmasses.com/retriever-bootstrap/css/retriever.css'
-//            '3solarmasses.com/corgi-bootstrap/css/corgi.css'
-        ],
+        externalCssRefs: [],
 
         concat: {
             options: {

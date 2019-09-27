@@ -82,7 +82,7 @@
         navbar +=       '<span class="icon-bar"></span>';
         navbar +=       '<span class="icon-bar"></span>';
         navbar +=     '</button>';
-        //navbar +=     '<div id="logo" class="pull-left"></div>';
+        navbar +=     '<div id="logo" class="pull-left"></div>';
         navbar +=     '<a class="navbar-brand" href="#"></a>';
         navbar +=   '</div>';
 
@@ -103,12 +103,12 @@
         var brand_text = $('#md-menu h1').toptext();
         $('#md-menu h1').remove();
 
-        // if ($.md.config.hasOwnProperty('logo')) {
-        //     $("#logo").css({
-        //         "margin-top": "8px",
-        //         "margin-left": "8px"
-        //     }).html('<img height="32" src="' + $.md.config.logo + '">');
-        // }
+        if ($.md.config.hasOwnProperty('logo')) {
+            $("#logo").css({
+                "margin-top": "8px",
+                "margin-left": "8px"
+            }).html('<img height="32" src="' + $.md.config.logo + '">');
+        }
 
         $('a.navbar-brand').html(brand_text);
 
